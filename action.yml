@@ -35,6 +35,10 @@ inputs:
     description: "Whether to add the output to the workflow summary"
     required: false
     default: true
+  exit_0:
+    description: "If set to true, exit with a 0 even if linting fails. Allows for formatting to be applied even if some files fail to be parsed"
+    required: false
+    default: true
 branding:
   color: "black"
   icon: "check-circle"
@@ -66,7 +70,11 @@ runs:
         fi
 
         # Exit with the exit-code returned by Black
-        exit ${exit_code}
+        if [ "${{ inputs.exit_0 }}" == "true" ]; then
+          exit 0
+        else
+          exit ${exit_code}
+        fi
       env:
         # TODO: Remove once https://github.com/actions/runner/issues/665 is fixed.
         INPUT_OPTIONS: ${{ inputs.options }}
